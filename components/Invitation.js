@@ -5,12 +5,21 @@ import { googleCalendarUrl, outlookCalendarUrl } from "@/lib/calendar";
 
 const firstName = (n) => n.trim().split(/\s+/)[0] || n;
 
-export default function Invitation({ slug, url, guest, event }) {
+export default function Invitation(props) {
+  return (
+    <>
+      {props.preview && <div className="preview-bar">Preview only. Nothing you do here is saved or sent.</div>}
+      <InvitationFlow {...props} />
+    </>
+  );
+}
+
+function InvitationFlow({ slug, url, guest, event, preview = false }) {
   const [stage, setStage] = useState("cover"); // cover | invitation | rsvp | done
   const [rsvp, setRsvp] = useState(guest.rsvp);
 
   function open() {
-    fetch(`/api/invite/${slug}/open`, { method: "POST" }).catch(() => {});
+    if (!preview) fetch(`/api/invite/${slug}/open`, { method: "POST" }).catch(() => {});
     setStage(rsvp ? "done" : "invitation");
   }
 
@@ -39,7 +48,7 @@ export default function Invitation({ slug, url, guest, event }) {
     return (
       <main className="page">
         <RsvpForm
-          slug={slug} guest={guest}
+          slug={slug} guest={guest} preview={preview}
           onBack={() => setStage(rsvp ? "done" : "invitation")}
           onDone={(r) => { setRsvp(r); setStage("done"); }}
         />
@@ -108,7 +117,7 @@ function ShareButton({ event }) {
   return <button className="btn ghost" onClick={share}>Share</button>;
 }
 
-function RsvpForm({ slug, guest, onBack, onDone }) {
+function RsvpForm({ slug, guest, preview, onBack, onDone }) {
   const prev = guest.rsvp;
   const [attending, setAttending] = useState(prev ? prev.attending : null);
   const [name, setName] = useState(prev?.name || guest.name);
@@ -122,6 +131,10 @@ function RsvpForm({ slug, guest, onBack, onDone }) {
   async function submit(e) {
     e.preventDefault();
     setBusy(true); setError("");
+    if (preview) {
+      onDone(attending ? { attending, name, email, phone, plusOne, plusOneName } : { attending: false });
+      return;
+    }
     try {
       const res = await fetch(`/api/invite/${slug}/rsvp`, {
         method: "POST", headers: { "Content-Type": "application/json" },
