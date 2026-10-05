@@ -1,0 +1,31 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; color: #111; }
+.stage { min-height: 100vh; display: grid; place-items: center; padding: 24px;
+  background: linear-gradient(135deg, var(--from), var(--to)); }
+.ticket { display: flex; width: min(780px, 100%); background: #fff; border-radius: 20px;
+  box-shadow: 0 30px 60px rgba(0,0,0,.35); overflow: hidden; animation: rise .7s ease both; }
+.main { flex: 1; padding: 36px; }
+.stub { width: 200px; padding: 36px 20px; text-align: center; color: #fff;
+  background: linear-gradient(160deg, var(--from), var(--to));
+  border-left: 3px dashed rgba(255,255,255,.7); display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+.eyebrow { text-transform: uppercase; letter-spacing: .15em; font-size: 12px; margin: 0; opacity: .7; }
+h1 { margin: 8px 0 4px; font-size: clamp(28px, 5vw, 42px); line-height: 1.1;
+  background: linear-gradient(90deg, var(--from), var(--to)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.guest { font-size: 18px; margin: 0 0 12px; }
+.msg { color: #444; }
+dl { display: grid; gap: 12px; margin: 20px 0; }
+dt { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: #888; }
+dd { margin: 2px 0 0; font-weight: 600; }
+.host, .small { font-size: 13px; opacity: .7; margin: 0; }
+.code { font: 700 22px ui-monospace, monospace; letter-spacing: .1em; background: rgba(255,255,255,.2); padding: 12px 6px; border-radius: 10px; }
+.card { background: #fff; padding: 32px; border-radius: 16px; width: min(460px, 100%); display: grid; gap: 16px; }
+.card h1 { color: #111; background: none; margin: 0; font-size: 26px; }
+label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+input, select { padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+.btn { text-align: center; background: #111; color: #fff; padding: 12px; border-radius: 8px; text-decoration: none; }
+.link { font-size: 12px; word-break: break-all; color: #555; }
+@keyframes rise { from { opacity: 0; transform: translateY(30px) scale(.97); } to { opacity: 1; transform: none; } }
+@media (max-width: 600px) {
+  .ticket { flex-direction: column; }
+  .stub { width: auto; border-left: 0; border-top: 3px dashed rgba(255,255,255,.7); }
+}
