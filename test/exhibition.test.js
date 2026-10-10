@@ -3,10 +3,11 @@ import assert from "node:assert/strict";
 import { exhibits } from "../content/exhibition/exhibits.js";
 import { categories, collections, tour } from "../content/exhibition/categories.js";
 import { statement } from "../content/exhibition/statement.js";
+import { records, recordsMeta, creatorPhotos } from "../content/exhibition/records.js";
 import { media } from "../content/exhibition/media.js";
 import { allExhibits, exhibitsIn, getExhibit, relatedExhibits, timelineEntries, formatExhibitDate, collectionWithExhibits, isPreview, openingStatementVisible, hasMedia } from "../lib/exhibition/content.js";
 
-const STATUSES = ["published", "ready", "awaiting_copy", "awaiting_asset", "needs_verification"];
+const STATUSES = ["published", "ready", "awaiting_copy", "awaiting_asset", "needs_verification", "superseded"];
 
 test("exhibit records are structurally valid", () => {
   const slugs = new Set(), ids = new Set();
@@ -17,7 +18,7 @@ test("exhibit records are structurally valid", () => {
     assert.ok(categories.some((c) => c.slug === e.category), `unknown category ${e.category}`);
     assert.ok(STATUSES.includes(e.publicationStatus), `bad status ${e.slug}`);
     if (e.date) assert.ok(["year", "month", "day", "minute"].includes(e.datePrecision), `bad precision ${e.slug}`);
-    for (const r of e.relatedExhibits ?? []) assert.ok(slugs.has(r) || exhibits.some((x) => x.slug === r), `${e.slug} relates to unknown ${r}`);
+    for (const r of e.relatedExhibits ?? []) assert.ok(slugs.has(r) || exhibits.some((x) => x.slug === r) || records.some((x) => x.slug === r), `${e.slug} relates to unknown ${r}`);
   }
 });
 
@@ -57,7 +58,7 @@ test("public view only contains published records; preview adds the rest", () =>
     assert.equal(isPreview(), false);
     assert.ok(allExhibits().every((e) => e.publicationStatus === "published"));
     assert.equal(getExhibit("muyiwa"), null);
-    assert.equal(exhibitsIn("selar-firsts").length, 2);
+    assert.equal(exhibitsIn("selar-firsts").length, 1);
     assert.equal(allExhibits().length, 59);
     process.env.EXHIBITION_PREVIEW = "1";
     assert.equal(getExhibit("muyiwa").slug, "muyiwa");
@@ -68,8 +69,8 @@ test("public view only contains published records; preview adds the rest", () =>
 
 test("collections cover real categories; tour and timeline resolve", () => {
   for (const c of collections) for (const slug of c.categories) assert.ok(categories.some((x) => x.slug === slug));
-  assert.equal(collectionWithExhibits("numbers").count, 8);
-  assert.equal(collectionWithExhibits("records").count, 30, "30 of the 34 imported records are public");
+  assert.equal(collectionWithExhibits("numbers").count, 5);
+  assert.equal(collectionWithExhibits("records").count, 34, "all 34 imported records are public");
   assert.ok(tour.length >= 8);
   process.env.EXHIBITION_PREVIEW = "0";
   const t = timelineEntries();
@@ -92,9 +93,28 @@ test("dates format without timezone drift", () => {
   assert.equal(formatExhibitDate("2023", "year"), "2023");
 });
 
+test("Douglas Kendyson's opening statement is published verbatim, with no invented role", async () => {
+  process.env.EXHIBITION_PREVIEW = "0";
+  const { openingStatement } = await import("../content/exhibition/statement.js");
+  assert.equal(openingStatementVisible(), true);
+  assert.equal(openingStatement.speaker, "Douglas Kendyson");
+  assert.equal(openingStatement.role, null, "role has not been confirmed");
+  assert.equal(openingStatement.text.length, 12);
+  assert.equal(openingStatement.text[0], "It takes a village, indeed.");
+  assert.match(openingStatement.text[2], /^10 to 15 years ago, the world looked very different for African creators\./);
+  assert.match(openingStatement.text[4], /Ten years ago, we started Selar with a simple belief/);
+  assert.equal(openingStatement.text.at(-1), "Welcome to the celebration of African creators. We are all creators.");
+  const { buildWalkData } = await import("../lib/exhibition/walk-data.js");
+  const room = buildWalkData().rooms[0];
+  assert.equal(room.key, "statement");
+  assert.equal(room.sections[0].title, "A word from Douglas Kendyson");
+  assert.equal(room.sections[0].items.length, 12);
+  assert.equal(room.sections[1].title, "The Exhibition Statement");
+  delete process.env.EXHIBITION_PREVIEW;
+});
+
 test("unfinished sections are hidden publicly", () => {
   process.env.EXHIBITION_PREVIEW = "0";
-  assert.equal(openingStatementVisible(), false);
   assert.equal(media.length, 0);
   assert.equal(hasMedia(), false);
   delete process.env.EXHIBITION_PREVIEW;
@@ -170,8 +190,8 @@ test("walk layout works on the real exhibition data", async () => {
   delete process.env.EXHIBITION_PREVIEW;
 });
 
-import { records, recordsMeta, creatorPhotos } from "../content/exhibition/records.js";
 import { recordStatus } from "../content/exhibition/records-status.js";
+import { exhibits as allExhibitsRaw } from "../lib/exhibition/content.js";
 import { existsSync } from "node:fs";
 
 test("imported records are complete, well formed, and every photo exists on disk", () => {
@@ -187,11 +207,17 @@ test("imported records are complete, well formed, and every photo exists on disk
   for (const p of Object.values(creatorPhotos)) assert.ok(existsSync(`public${p}`));
 });
 
-test("records that contradict the milestones document are held back and explained", () => {
-  for (const [slug, st] of Object.entries(recordStatus)) {
-    assert.ok(records.some((r) => r.slug === slug), `${slug} is not an imported record`);
-    assert.notEqual(st.publicationStatus, "published");
-    assert.match(st.sourceNote, /CONFLICT/);
-  }
-  assert.equal(Object.keys(recordStatus).length, 4);
+test("where the records site and the milestones document disagree, the records site wins", async () => {
+  process.env.EXHIBITION_PREVIEW = "0";
+  assert.deepEqual(recordStatus, {}, "no imported record is held back");
+  const { supersededByRecords } = await import("../content/exhibition/records-status.js");
+  assert.deepEqual(Object.keys(supersededByRecords).sort(), ["coach-dino", "funky-collections", "orient-graphic-skills", "temitope-agbana"]);
+  for (const slug of Object.keys(supersededByRecords)) { assert.equal(getExhibit(slug), null, `${slug} is retired publicly`); assert.ok(allExhibitsRaw.some((e) => e.slug === slug)); }
+  assert.equal(getExhibit("record-longest-daily-sales-streak").figure.value, "1,194 Days");
+  assert.equal(getExhibit("record-most-units-in-a-month").figure.value, "8,133 Units");
+  assert.match(getExhibit("record-first-affiliate-commission").creator, /Ajiboye Temitope/);
+  const coy = Object.fromEntries(exhibitsIn("creator-of-the-year").map((e) => [e.date, e.creator]));
+  assert.deepEqual(coy, { 2016: "Muyiwà", 2017: "Tolu Falode", 2018: "Outburst Music Group", 2019: "EXQUISITE MAGAZINE", 2020: "Tricia Biz", 2021: "Nelly Agbogu", 2022: "Taofeek Kareem", 2023: "COACH DINO", 2024: "COACH DINO", 2025: "COACH DINO" });
+  for (const e of allExhibits()) for (const r of e.relatedExhibits ?? []) assert.ok(!(r in supersededByRecords), `${e.slug} still relates to retired ${r}`);
+  delete process.env.EXHIBITION_PREVIEW;
 });

@@ -1,21 +1,17 @@
 // Publication / verification decisions for the records imported from records.selar.com (see scripts/import_records.py).
-// Records not listed here are published and treated as verified, because they come straight from the live Selar records site.
-// To approve a held record, set both statuses below to "published" / "verified" (or delete its entry once confirmed).
-export const recordStatus = {
-  "record-longest-daily-sales-streak": {
-    publicationStatus: "needs_verification", verificationStatus: "needs_verification",
-    sourceNote: "CONFLICT: records.selar.com says COACH DINO's longest daily sales streak is 1,194 days (15 Aug 2026). The milestones document used for the Hall of Fame says 1,110 days (exhibit: coach-dino). May simply be a later figure for a streak that has grown; confirm which to show.",
-  },
-  "record-most-units-in-a-month": {
-    publicationStatus: "needs_verification", verificationStatus: "needs_verification",
-    sourceNote: "CONFLICT: records.selar.com says 8,133 units in a month (Jan 2026, listed as \"Oreint Graphic Skills\"); the milestones document says 8,129 units (exhibit: orient-graphic-skills). Confirm the figure and the spelling of the name.",
-  },
-  "record-first-affiliate-commission": {
-    publicationStatus: "needs_verification", verificationStatus: "needs_verification",
-    sourceNote: "CONFLICT: records.selar.com names Ajiboye Temitope as the first affiliate commission paid ($5.58, 21 Aug 2017). The milestones document names Temitope Agbana for the same date (exhibit: temitope-agbana). Possibly the same person under different names; confirm.",
-  },
-  "record-creator-of-the-year": {
-    publicationStatus: "needs_verification", verificationStatus: "needs_verification",
-    sourceNote: "CONFLICT: the Creator of the Year history on records.selar.com (2025 and 2024 and 2023 COACH DINO, 2022 Taofeek Kareem, 2021 Nelly Agbogu, 2020 Tricia Biz, 2019 Exquisite Magazine, 2018 Outburst Music Group) differs from the milestones document (2018 Tolu Falode, 2019 Jay Becks, 2021 The Discovery Centre, 2023 The Discovery Centre, 2024 The Maintenance Institute / Epsilon Reliability Solutions Limited, 2025 Isi Benedicta Institute). Only 2020 and 2022 agree. The site's ranking appears to be by sales volume. Not reconciled; confirm which list is the official one.",
-  },
+//
+// RULE (project owner): wherever records.selar.com and the milestones document disagree, the records site wins.
+// Records not listed in `recordStatus` are published and treated as verified (they come straight from the live site).
+export const recordStatus = {};
+
+// Milestones-document exhibits that contradict the records site. They are retired (kept for reference, shown only in team preview).
+export const supersededByRecords = {
+  "coach-dino": "Records site: Coach Dino's longest daily sales streak is 1,194 days (15 Aug 2026), not the 1,110 days in the milestones document. Shown as record-longest-daily-sales-streak.",
+  "orient-graphic-skills": "Records site: 8,133 units in a month (Jan 2026, spelled \"Oreint Graphic Skills\"), not the 8,129 in the milestones document. Shown as record-most-units-in-a-month.",
+  "temitope-agbana": "Records site: the first affiliate commission paid was to Ajiboye Temitope ($5.58, 21 Aug 2017), not Temitope Agbana. Shown as record-first-affiliate-commission.",
+  "funky-collections": "Records site: Funky Collections reached $10K in 3 days (6 Aug 2023), ranking 2nd for \"Fastest to $10K in revenue\", which contradicts five-figure sales within seven hours. Shown in the runners-up of record-fastest-to-10k-in-revenue.",
 };
+
+// Creator of the Year: the records site's history replaces the milestones document for every year it covers (2018 to 2025).
+// 2016 and 2017 are only in the milestones document, so they stay.
+export const creatorOfTheYearFromRecords = true;

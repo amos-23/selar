@@ -198,7 +198,9 @@
 .statement { max-width: 44rem; font-size: clamp(18px, 2.2vw, 22px); line-height: 1.6; }
 .statement-lead { font: 600 clamp(24px, 3.4vw, 36px)/1.25 var(--display); color: var(--purple); }
 .statement-close { font: 600 clamp(22px, 3vw, 30px)/1.3 var(--display); color: var(--purple); margin-top: 28px; padding-top: 24px; border-top: 3px solid var(--purple); }
-.opening { margin-top: 48px; padding: 28px; background: var(--white); border-radius: 6px; max-width: 44rem; }
+.opening { margin: 0 0 56px; padding: 28px; background: var(--white); border-radius: 6px; max-width: 44rem; }
+.opening > p:first-of-type + p, .opening-by + p { font: 600 clamp(22px, 3vw, 30px)/1.3 var(--display); color: var(--purple); }
+.opening { font-size: clamp(17px, 2vw, 20px); }
 .opening-by { font: 600 18px var(--display); color: var(--purple); }
 .opening-portrait { border-radius: 6px; max-width: 280px; }
 .closing { text-align: center; }

@@ -42,6 +42,17 @@ function fit(ctx, text, family, weight, startSize, minSize, maxW, maxLines) {
   }
 }
 
+// Like fit(), but shrinks until the wrapped block also fits `maxH` pixels tall.
+function fitBox(ctx, text, family, weight, startSize, minSize, maxW, maxH, lh = 1.32) {
+  let size = startSize;
+  for (;;) {
+    ctx.font = `${weight} ${size}px ${family}`;
+    const lines = wrap(ctx, text, maxW);
+    if (lines.length * size * lh <= maxH || size <= minSize) return { lines, size };
+    size -= 1;
+  }
+}
+
 function drawLines(ctx, lines, x, y, lh) {
   lines.forEach((l, i) => ctx.fillText(l, x, y + i * lh));
   return y + lines.length * lh;
@@ -103,9 +114,10 @@ export function drawPanel(canvas, item, themeKey, photoImg = null) {
       ctx.font = `600 34px ${DISPLAY}`; ctx.fillStyle = T.accent; ctx.fillText(item.heading, pad, y + 6); y += 44;
       if (item.byline) { ctx.font = `500 24px ${BODY}`; ctx.fillStyle = T.cardFg; ctx.fillText(item.byline, pad, y); y += 36; }
     }
+    const avail = h - (y + (item.lead ? 20 : 10)) - 34;
     const f = item.lead
-      ? fit(ctx, item.text, DISPLAY, 600, 44, 26, inner, 9)
-      : fit(ctx, item.text, BODY, 400, 34, 20, inner, 12);
+      ? fitBox(ctx, item.text, DISPLAY, 600, 44, 22, inner, avail)
+      : fitBox(ctx, item.text, BODY, 400, 34, 17, inner, avail);
     ctx.font = `${item.lead ? 600 : 400} ${f.size}px ${item.lead ? DISPLAY : BODY}`;
     ctx.fillStyle = item.lead ? T.accent : T.cardFg;
     drawLines(ctx, f.lines, pad, y + (item.lead ? 20 : 10) + f.size * 0.8, f.size * 1.32);
