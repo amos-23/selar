@@ -4,7 +4,7 @@ import { useState } from "react";
 import StatusBadge from "./StatusBadge";
 
 // entries: [{ slug, title, creator, achievement, figure, when, year, categoryTitle, status }]
-export default function Timeline({ entries, preview }) {
+export default function Timeline({ entries, preview, onOpen }) {
   const [openIds, setOpenIds] = useState(() => new Set());
   const years = [...new Set(entries.map((e) => e.year))];
   const allOpen = openIds.size === entries.length;
@@ -39,7 +39,9 @@ export default function Timeline({ entries, preview }) {
                     <div id={`tl-${e.slug}`} className="tl-body" hidden={!open}>
                       <p>{e.achievement}</p>
                       {e.figure ? <p className="tl-figure"><strong>{e.figure.value}</strong> {e.figure.label}</p> : null}
-                      <Link href={`/exhibition/exhibits/${e.slug}`} className="btn sm">Open exhibit</Link>
+                      {onOpen
+                        ? <button type="button" className="btn sm" onClick={() => onOpen(e.slug)}>Walk to this exhibit</button>
+                        : <Link href={`/exhibition/exhibits/${e.slug}`} className="btn sm">Open exhibit</Link>}
                     </div>
                   </li>
                 );

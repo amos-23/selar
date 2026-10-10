@@ -46,6 +46,7 @@ export default async function ExhibitPage({ params }) {
           <span aria-hidden="true"> / </span>
           <Link href={`/exhibition/hall-of-fame#${cat.slug}`}>{cat.title}</Link>
         </nav>
+        <Link href={`/exhibition#${e.slug}`} className="btn sm">Walk to this exhibit</Link>
         <BackButton fallback={col ? `/exhibition/collections/${col.slug}` : "/exhibition/hall-of-fame"} label="Close" />
       </div>
 

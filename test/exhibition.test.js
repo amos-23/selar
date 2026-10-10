@@ -100,3 +100,68 @@ test("approved statement text is preserved", () => {
   assert.equal(statement.closingLine, "Welcome to the celebration of African Creators. We are all Creators.");
   assert.match(statement.paragraphs[2], /over the last 10 to 15 years/);
 });
+
+import { buildLayout, DIMS, roomIndexAt, standPoint, exhibitOrder } from "../components/exhibition/walk/layout.js";
+
+function sampleRooms() {
+  const ex = (n) => Array.from({ length: n }, (_, i) => ({ kind: "exhibit", id: `e${n}-${i}` }));
+  return [
+    { key: "statement", title: "S", theme: "blush", sections: [{ key: "s", items: [{ kind: "text", id: "t1" }, { kind: "text", id: "t2" }] }] },
+    { key: "a", title: "A", theme: "purple", sections: [{ key: "a1", title: "One", items: ex(3) }, { key: "a2", title: "Two", items: ex(4) }] },
+    { key: "closing", title: "C", theme: "purple", kind: "closing", sections: [{ key: "c", items: [{ kind: "closing", id: "closing" }] }] },
+  ];
+}
+
+test("walk layout: rooms are contiguous and run down the hall", () => {
+  const L = buildLayout(sampleRooms());
+  assert.equal(L.rooms[0].key, "lobby");
+  for (let i = 1; i < L.rooms.length; i++) {
+    assert.ok(L.rooms[i].zStart < L.rooms[i - 1].zStart);
+    if (i > 1) assert.equal(L.rooms[i].zStart, L.rooms[i - 1].zEnd);
+  }
+  assert.equal(roomIndexAt(L, 1.5), 0);
+  assert.equal(roomIndexAt(L, L.rooms[2].zStart - 3), 2);
+});
+
+test("walk layout: every item is placed once, on a wall, inside its room, without overlapping", () => {
+  const L = buildLayout(sampleRooms());
+  const ids = L.rooms.flatMap((r) => r.items.map((i) => i.id));
+  assert.equal(new Set(ids).size, ids.length);
+  for (const r of L.rooms.slice(1)) {
+    const bySide = { left: [], right: [] };
+    for (const it of [...r.items, ...r.headers]) {
+      if (it.side === "end") continue;
+      assert.ok(Math.abs(it.x) <= DIMS.wallX + 1e-9);
+      assert.ok(it.z < r.zStart - DIMS.roomPadStart + DIMS.slot / 2 + 1e-9 && it.z > r.zEnd, `${it.id} outside ${r.key}`);
+      bySide[it.side].push(it.z);
+    }
+    for (const zs of Object.values(bySide)) {
+      zs.sort((a, b) => b - a);
+      for (let i = 1; i < zs.length; i++) assert.ok(zs[i - 1] - zs[i] >= DIMS.slot - 1e-6, "panels overlap");
+    }
+  }
+});
+
+test("walk layout: standing points keep the camera inside the doorway and facing the wall", () => {
+  const L = buildLayout(sampleRooms());
+  for (const it of L.rooms[2].items) {
+    const s = standPoint(it, 1.6);
+    assert.ok(Math.abs(s.x) <= 2.2 && Math.abs(s.x) >= 0.8);
+    assert.equal(Math.sign(s.x) === -1, it.side === "left");
+  }
+  assert.ok(exhibitOrder(L).length === 7);
+});
+
+test("walk layout works on the real exhibition data", async () => {
+  process.env.EXHIBITION_PREVIEW = "0";
+  const { buildWalkData } = await import("../lib/exhibition/walk-data.js");
+  const { rooms, exhibits: byId } = buildWalkData();
+  const L = buildLayout(rooms);
+  const placed = L.rooms.flatMap((r) => r.items).filter((i) => i.kind === "exhibit");
+  assert.equal(placed.length, 29);
+  assert.equal(Object.keys(byId).length, 29);
+  assert.ok(!placed.some((i) => i.id === "muyiwa" || i.id === "ut-first-account"), "conflicting records stay off the public walk");
+  assert.ok(L.rooms.map((r) => r.key).join() .startsWith("lobby,statement,numbers,firsts,products,people,decade"));
+  assert.equal(L.rooms.at(-1).key, "closing");
+  delete process.env.EXHIBITION_PREVIEW;
+});

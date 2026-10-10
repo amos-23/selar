@@ -1,7 +1,4 @@
 import "./exhibition.css";
-import Nav from "@/components/exhibition/Nav";
-import PreviewBar from "@/components/exhibition/PreviewBar";
-import { hasMedia } from "@/lib/exhibition/content";
 import { statement } from "@/content/exhibition/statement";
 
 const base = process.env.SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
@@ -27,13 +24,7 @@ export default function ExhibitionLayout({ children }) {
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Parkinsans:wght@400;600;700&family=Google+Sans+Flex:wght@400;500;600&display=swap" />
-      <PreviewBar />
-      <Nav showHighlights={hasMedia()} />
-      <main id="main" tabIndex={-1}>{children}</main>
-      <footer className="foot">
-        <p>Selar at 10 · The Gears of Creativity</p>
-        <p className="foot-line">Welcome to the celebration of African Creators. We are all Creators.</p>
-      </footer>
+      {children}
     </div>
   );
 }

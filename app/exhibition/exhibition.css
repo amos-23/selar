@@ -222,3 +222,84 @@
 @media (prefers-reduced-motion: reduce) {
   .ex *, .ex *::before, .ex *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* ---------- the walkthrough (single 3D scene) ---------- */
+.ex .walk { position: fixed; inset: 0; background: var(--deep); color: var(--blush); overflow: hidden; }
+.ex .walk canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; outline: none; }
+.ex .walk-loading { position: absolute; inset: 0; display: grid; place-items: center; background: var(--deep); color: var(--blush); font: 500 18px var(--body); }
+.ex .walk-msg { position: absolute; top: 16px; left: 16px; right: 16px; z-index: 5; }
+.ex .walk-card { position: absolute; z-index: 5; inset: 0; margin: auto; height: fit-content; width: min(560px, 100% - 32px); max-height: calc(100dvh - 32px); overflow: auto; text-align: center; padding: clamp(24px, 5vw, 44px); background: rgba(45, 0, 37, .9); border: 2px solid rgba(255, 228, 251, .3); border-radius: 12px; backdrop-filter: blur(8px); }
+.ex .walk-card h1 { font-size: clamp(30px, 6vw, 52px); color: #fff; margin-bottom: 14px; }
+.ex .walk-logo { display: block; margin: 0 auto 14px; width: 130px; height: auto; }
+.ex .walk-lede { font-size: clamp(16px, 2.2vw, 19px); margin: 0 auto; max-width: 30rem; }
+.ex .walk-card .ex-actions { justify-content: center; margin-top: 24px; }
+.ex .walk-card .btn.ghost { color: var(--blush); }
+.ex .walk-tip { margin: 18px 0 0; font-size: 14px; opacity: .8; }
+.ex .walk .ex-eyebrow { color: var(--yellow); }
+
+.ex .hud-top { position: absolute; z-index: 6; top: 0; left: 0; right: 0; display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 10px 12px; pointer-events: none; flex-wrap: wrap; }
+.ex .hud-top > * { pointer-events: auto; }
+.ex .hud-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 16px; font: 500 15px var(--body); color: var(--blush); background: rgba(45, 0, 37, .82); border: 2px solid rgba(255, 228, 251, .55); border-radius: 999px; cursor: pointer; text-decoration: none; backdrop-filter: blur(6px); -webkit-tap-highlight-color: transparent; user-select: none; touch-action: manipulation; }
+.ex .hud-btn:hover:not(:disabled) { background: var(--yellow); color: var(--deep); border-color: var(--yellow); }
+.ex .hud-btn:disabled { opacity: .35; cursor: default; }
+.ex .hud-btn.round { width: 56px; height: 56px; padding: 0; font-size: 20px; }
+.ex .hud-btn.big { width: 72px; height: 72px; font-size: 26px; background: var(--yellow); color: var(--deep); border-color: var(--yellow); }
+.ex .hud-logo img { width: 62px; height: auto; display: block; }
+.ex .hud-logo span { font: 600 14px var(--display); color: var(--yellow); }
+.ex .hud-room { position: absolute; z-index: 6; top: 16px; left: 50%; transform: translateX(-50%); margin: 0; padding: 8px 18px; background: rgba(45, 0, 37, .82); border-radius: 999px; font: 600 14px var(--body); color: var(--blush); max-width: calc(100% - 24px); pointer-events: none; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ex .hud-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.ex .hud-preview { position: absolute; z-index: 6; left: 12px; top: 66px; margin: 0; padding: 3px 10px; background: var(--yellow); color: var(--deep); font: 700 11px var(--body); letter-spacing: .08em; text-transform: uppercase; border-radius: 99px; }
+.ex .hud-bottom { position: absolute; z-index: 6; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 12px 12px calc(14px + env(safe-area-inset-bottom)); pointer-events: none; }
+.ex .hud-bottom > * { pointer-events: auto; }
+.ex .hud-walk { display: flex; align-items: center; gap: 10px; }
+.ex .hud-hint { position: absolute; z-index: 5; left: 50%; transform: translateX(-50%); bottom: 96px; margin: 0; padding: 8px 16px; background: rgba(45, 0, 37, .8); border-radius: 999px; font-size: 14px; text-align: center; max-width: calc(100% - 24px); pointer-events: none; }
+.ex .walk-end { position: absolute; z-index: 6; left: 50%; transform: translateX(-50%); bottom: 100px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; width: min(720px, 100% - 24px); }
+.ex .walk-end .btn.ghost { color: var(--blush); }
+.ex .walk-end .share-msg { color: var(--blush); }
+
+.ex .walk-panel, .ex .walk-drawer { position: absolute; z-index: 7; background: var(--blush); color: var(--deep); overflow: auto; padding: 22px; border-radius: 12px; box-shadow: 0 20px 50px rgba(0, 0, 0, .45); --muted: rgba(45,0,37,.78); --accent: var(--purple); --focus: var(--purple); --fg: var(--deep); --bg: var(--blush); }
+.ex .walk-panel { top: 64px; right: 12px; bottom: 12px; width: min(440px, 100% - 24px); outline: none; }
+.ex .walk-panel .ex-eyebrow { color: var(--purple); }
+.ex .walk-panel h2 { font-size: clamp(26px, 3.4vw, 36px); margin-bottom: 8px; overflow-wrap: anywhere; }
+.ex .walk-close { float: right; margin-left: 12px; }
+.ex .walk-figure { display: grid; gap: 2px; margin: 4px 0 10px; }
+.ex .walk-figure strong { font: 700 clamp(38px, 6vw, 56px)/1 var(--display); color: var(--purple); overflow-wrap: anywhere; }
+.ex .walk-figure span { font-size: 16px; }
+.ex .walk-creator { font: 600 18px var(--display); color: var(--purple); margin-bottom: 8px; }
+.ex .walk-ach { font-size: 19px; line-height: 1.4; }
+.ex .walk-when { color: var(--muted); }
+.ex .walk-img { width: 100%; border-radius: 8px; margin: 10px 0; display: block; }
+.ex .walk-related h3 { font-size: 16px; margin: 18px 0 6px; font-family: var(--body); }
+.ex .walk-related ul, .ex .walk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.ex .walk-related .link, .ex .walk-list .link { text-align: left; padding: 8px 0; color: var(--purple); }
+.ex .walk-nav { display: flex; gap: 8px; margin: 18px 0 8px; }
+.ex .walk-panel .btn.ghost, .ex .walk-drawer .btn.ghost { color: var(--deep); }
+.ex .walk-panel .share-msg, .ex .walk-drawer .share-msg { color: var(--muted); }
+.ex .walk-panel .internal { border-color: var(--deep); }
+
+.ex .walk-drawer { top: 64px; left: 12px; bottom: 12px; width: min(380px, 100% - 24px); }
+.ex .walk-drawer.wide { width: min(560px, 100% - 24px); background: var(--grey); }
+.ex .walk-drawer-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+.ex .walk-drawer h2 { margin: 0; font-size: 26px; }
+.ex .walk-drawer .search { margin-bottom: 14px; max-width: none; }
+.ex .walk-room-btn { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px; background: var(--white); border: 2px solid transparent; border-radius: 10px; cursor: pointer; color: var(--deep); font: 600 16px var(--display); }
+.ex .walk-room-btn b { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--deep); color: var(--yellow); font: 700 14px var(--display); flex: none; }
+.ex .walk-room-btn:hover, .ex .walk-room-btn[aria-current="true"] { border-color: var(--purple); }
+.ex .walk-drawer .tl-controls { margin-bottom: 14px; }
+.ex .walk-drawer .tl { padding-left: 14px; }
+.ex .walk-drawer .tl-year { padding-left: 16px; }
+
+@media (min-width: 860px) { .ex .hud-bottom.with-panel { right: min(480px, 38vw + 12px); } }
+@media (max-width: 859px) {
+  .ex .hud-btn { font-size: 14px; padding: 6px 12px; }
+  .ex .hud-btn span { display: none; }
+  .ex .hud-logo span { display: inline; }
+  .ex .hud-text { display: none; }
+  .ex .hud-top { padding: 8px; }
+  .ex .hud-room { top: 62px; font-size: 13px; padding: 6px 12px; }
+  .ex .hud-hint { bottom: 92px; font-size: 13px; }
+  .ex .walk-panel { top: auto; left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 56dvh; padding: 16px; }
+  .ex .walk-drawer, .ex .walk-drawer.wide { top: 56px; left: 8px; right: 8px; bottom: 8px; width: auto; }
+  .ex .hud-bottom.with-panel { display: none; }
+  .ex .walk-end { bottom: 96px; }
+}

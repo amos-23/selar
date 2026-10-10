@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const ITEMS = [
-  { href: "/exhibition", label: "Entrance", exact: true },
+  { href: "/exhibition", label: "Walk the exhibition", exact: true },
   { href: "/exhibition/gallery", label: "Explore" },
   { href: "/exhibition/hall-of-fame", label: "Hall of Fame" },
   { href: "/exhibition/timeline", label: "Timeline" },
