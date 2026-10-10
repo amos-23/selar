@@ -18,7 +18,7 @@ export default function Gallery() {
     return { count: c.count, list };
   };
   const rooms = [
-    { key: "hof", n: 4, href: "/exhibition/hall-of-fame", title: "The Hall of Fame", text: "Ten categories of achievement, from the fastest sales to Creator of the Year.", meta: `${hof.length} categories · ${total} exhibits`, tone: "blush" },
+    { key: "hof", n: 4, href: "/exhibition/hall-of-fame", title: "The Hall of Fame", text: "Every category of achievement, from the fastest sales to Creator of the Year.", meta: `${hof.length} categories · ${total} exhibits`, tone: "blush" },
     ...collections.map((c) => {
       const x = names(c.slug);
       return { key: c.slug, n: c.number, href: `/exhibition/collections/${c.slug}`, title: c.title, text: c.intro, meta: `${x.count} ${x.count === 1 ? "exhibit" : "exhibits"}`, list: x.list, tone: c.theme };

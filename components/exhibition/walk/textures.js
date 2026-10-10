@@ -33,7 +33,11 @@ function fit(ctx, text, family, weight, startSize, minSize, maxW, maxLines) {
   for (;;) {
     ctx.font = `${weight} ${size}px ${family}`;
     const lines = wrap(ctx, text, maxW);
-    if (lines.length <= maxLines || size <= minSize) return { lines: lines.slice(0, maxLines), size };
+    if (lines.length <= maxLines || size <= minSize) {
+      const cut = lines.length > maxLines, out = lines.slice(0, maxLines);
+      if (cut && out.length) out[out.length - 1] = out[out.length - 1].replace(/[\s,.;:]*$/, "") + "…";
+      return { lines: out, size };
+    }
     size -= 2;
   }
 }
@@ -50,7 +54,28 @@ function chip(ctx, text, x, y, color, fg) {
   ctx.fillStyle = fg; ctx.textBaseline = "middle"; ctx.fillText(text, x + 12, y + 18); ctx.textBaseline = "alphabetic";
 }
 
-export function drawPanel(canvas, item, themeKey) {
+export function initialsOf(name) {
+  return String(name ?? "").replace(/™/g, "").split(/\s+/).filter((w) => w && !/^(the|of|and|by)$/i.test(w)).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "S";
+}
+
+// Draws a creator photo (or initials) clipped to a circle with a ring.
+export function drawAvatar(ctx, img, cx, cy, r, name, T) {
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.closePath(); ctx.clip();
+  if (img && img.naturalWidth) {
+    const s = Math.min(img.naturalWidth, img.naturalHeight);
+    ctx.drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, cx - r, cy - r, r * 2, r * 2);
+  } else {
+    ctx.fillStyle = T.accent; ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+    ctx.fillStyle = T.card; ctx.font = `700 ${Math.round(r * 0.78)}px ${DISPLAY}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(initialsOf(name), cx, cy + 2); ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+  }
+  ctx.restore();
+  ctx.beginPath(); ctx.arc(cx, cy, r + 4, 0, Math.PI * 2); ctx.lineWidth = 8; ctx.strokeStyle = T.accent; ctx.stroke();
+  ctx.lineWidth = 1;
+}
+
+export function drawPanel(canvas, item, themeKey, photoImg = null) {
   const T = THEMES[themeKey] ?? THEMES.deep;
   const ctx = canvas.getContext("2d");
   const W = canvas.width, H = canvas.height, s = W / 768;
@@ -62,7 +87,7 @@ export function drawPanel(canvas, item, themeKey) {
   if (item.kind === "header") {
     ctx.fillStyle = "#2d0025"; ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = T.hi; ctx.fillRect(0, 0, 14, h);
-    ctx.font = `700 22px ${BODY}`; ctx.fillStyle = T.hi; ctx.fillText("HALL OF FAME", pad + 8, 70);
+    ctx.font = `700 22px ${BODY}`; ctx.fillStyle = T.hi; ctx.fillText((item.kicker || "Hall of Fame").toUpperCase(), pad + 8, 70);
     const t = fit(ctx, item.title, DISPLAY, 600, 76, 40, inner - 8, 3);
     ctx.fillStyle = "#ffe4fb"; const y = drawLines(ctx, t.lines, pad + 8, 150, t.size * 1.1);
     if (item.intro) { const b = fit(ctx, item.intro, BODY, 400, 28, 20, inner - 8, 4); ctx.font = `400 ${b.size}px ${BODY}`; ctx.fillStyle = "rgba(255,228,251,.85)"; drawLines(ctx, b.lines, pad + 8, Math.max(y + 24, 330), b.size * 1.35); }
@@ -95,17 +120,24 @@ export function drawPanel(canvas, item, themeKey) {
   }
 
   // exhibit
+  const hasAvatar = item.kind === "exhibit";
+  const R = 74, ax = w - pad - R, ay = 62 + R;
+  if (hasAvatar) drawAvatar(ctx, photoImg, ax, ay, R, item.creator || item.title, T);
+  const topW = hasAvatar ? inner - (R * 2 + 24) : inner;
   ctx.font = `700 20px ${BODY}`; ctx.fillStyle = T.accent;
-  ctx.fillText((item.category || "").toUpperCase(), pad, 62);
+  const kick = fit(ctx, (item.category || "").toUpperCase(), BODY, 700, 20, 14, topW, 1);
+  ctx.font = `700 ${kick.size}px ${BODY}`; ctx.fillText(kick.lines[0] ?? "", pad, 62);
   let y = 100;
   if (item.figure) {
-    const f = fit(ctx, item.figure.value, DISPLAY, 700, 108, 52, inner, 1);
+    const f = fit(ctx, item.figure.value, DISPLAY, 700, 108, 48, topW, 1);
     ctx.font = `700 ${f.size}px ${DISPLAY}`; ctx.fillStyle = T.accent; ctx.fillText(f.lines[0], pad, y + f.size * 0.82);
     y += f.size * 0.82 + 52; // clear the descenders of the big number
-    ctx.font = `500 26px ${BODY}`; ctx.fillStyle = T.cardFg; ctx.fillText(item.figure.label, pad, y); y += 36;
+    if (item.figure.label) { const l = fit(ctx, item.figure.label, BODY, 500, 26, 16, topW, 1); ctx.font = `500 ${l.size}px ${BODY}`; ctx.fillStyle = T.cardFg; ctx.fillText(l.lines[0], pad, y); }
+    y += 36;
   }
   const titleText = item.yearCard ? item.creator : item.title;
-  const t = fit(ctx, titleText, DISPLAY, 600, item.figure ? 44 : 64, 26, inner, item.figure ? 2 : 3);
+  const titleW = y < ay + R + 8 ? topW : inner;
+  const t = fit(ctx, titleText, DISPLAY, 600, item.figure ? 44 : 64, 26, titleW, item.figure ? 2 : 3);
   ctx.font = `600 ${t.size}px ${DISPLAY}`; ctx.fillStyle = T.cardFg;
   y = drawLines(ctx, t.lines, pad, y + t.size * 0.9, t.size * 1.12);
   if (!item.yearCard && item.creator && item.creator !== item.title) {
@@ -115,7 +147,7 @@ export function drawPanel(canvas, item, themeKey) {
     const a = fit(ctx, item.achievement, BODY, 400, 25, 18, inner, Math.max(2, Math.floor((h - y - 44) / 32)));
     ctx.font = `400 ${a.size}px ${BODY}`; ctx.globalAlpha = 0.92; drawLines(ctx, a.lines, pad, Math.max(y + 24, 380), a.size * 1.3); ctx.globalAlpha = 1;
   }
-  if (item.status) chip(ctx, item.status.toUpperCase(), w - pad - 190, 44, "#ffd61f", "#2d0025");
+  if (item.status) chip(ctx, item.status.toUpperCase(), pad, 8, "#ffd61f", "#2d0025");
   ctx.font = `600 18px ${BODY}`; ctx.fillStyle = T.accent; ctx.fillText("Select to open  →", pad, h - 22);
 }
 

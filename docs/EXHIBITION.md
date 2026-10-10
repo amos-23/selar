@@ -15,7 +15,7 @@ npm run build && npm start
 
 | | |
 |---|---|
-| Rooms (in walking order) | Entrance, 2 The Exhibition Statement, 5 The Numbers That Tell Our Story, 6 The Firsts, 7 The Products That Made History, 8 The People Behind the Ecosystem, 9 A Decade of Creativity, 10 Inside the Exhibition (only when media is published), 11 The Closing Reflection |
+| Rooms (in walking order) | Entrance, 2 The Exhibition Statement, 3 Breakable Records, 5 The Numbers That Tell Our Story, 6 The Firsts, 7 The Products That Made History, 8 The People Behind the Ecosystem, 9 A Decade of Creativity, 10 Inside the Exhibition (only when media is published), 11 The Closing Reflection |
 | Hall of Fame | Rooms 5 to 9 together: all 10 categories, each introduced by a header panel on the wall |
 | Moving | Drag to look. W A S D / arrow keys to walk (Shift to hurry), mouse wheel to walk, on screen ▲ ▼ (hold) for touch, ◀ ▶ Previous/Next room to glide between rooms |
 | Exhibits | Click or tap a panel: the camera steps up to it and a panel opens (figure, story, related exhibits, previous/next, share). Esc, Close, or walking away steps back |
@@ -34,6 +34,25 @@ Opening statement, media room and the content workflow are unchanged (see below)
 - **Performance.** The scene renders on demand (idle = no GPU work apart from the lobby gears, which stop when you leave the lobby and under reduced motion), pixel ratio is capped (1.5 on touch devices), textures are smaller on touch/low-memory devices, and nothing is shadowed.
 - **Accessibility.** All controls are real buttons; the Rooms drawer reaches every exhibit by keyboard or screen reader; rooms are announced in a live region; reduced motion removes glides and spinning; Esc closes panels; the text version is always one click away.
 - **Content is data** in `content/exhibition/*.js`; UI components never hardcode creator records.
+
+## Breakable Records (imported from records.selar.com)
+The 34 records on https://records.selar.com/breakable-records ("Yearly Champions") are in the exhibition as a room (**Room 3, Breakable Records**) with a frame for each record, grouped into Fastest to Reach, Streaks and Loyalty, Volume and Revenue, Firsts on Selar, and Creator of the Year. Each frame shows the holder's **circular photo** (initials in a circle when there is no photo), the figure, the date, the site's own description, the runners-up with their photos, past holders (Creator of the Year) and a link to the creator's store.
+
+- **Refresh:** `python3 scripts/import_records.py` re-reads the site, rewrites `content/exhibition/records.js` (generated, do not edit) and downloads photos to `public/exhibition/creators/` (square-cropped; the UI draws them as circles). Needs Pillow and access to `records.selar.com` and `files.selar.co`.
+- **Decisions live in** `content/exhibition/records-status.js`, which survives re-imports.
+- **Photos are also attached to milestones-document frames** when the same creator appears on the site (matched by name, see `creatorPhotos` in `records.js`).
+- **8 old photo files return "Access Denied" at the source** (for example Exquisite Magazine, Outburst Music Group, Coach B, Jazz Entrepreneur, George Okoro and the Ajiboye Temitope photo), so those people show initials. Nelly Agbogu's photo is also missing for the same reason.
+- **Rights:** photos are creator images already published on selar.com, imported on request. Confirm Selar has permission to show them in the exhibition (PRD section 18).
+- Names are shown as the site spells them, including "Oreint Graphic Skills".
+
+### Disagreements between the site and the milestones document
+Held back from the public site (visible, labelled, in team preview) until confirmed. To publish one, edit `records-status.js`.
+1. **Creator of the Year.** The site's history (2025, 2024, 2023: Coach Dino; 2022: Taofeek Kareem; 2021: Nelly Agbogu; 2020: Tricia Biz; 2019: Exquisite Magazine; 2018: Outburst Music Group) disagrees with the milestones document in six of the eight years they share (it says 2018 Tolu Falode, 2019 Jay Becks, 2021 and 2023 The Discovery Centre, 2024 The Maintenance Institute, 2025 Isi Benedicta Institute). Only 2020 and 2022 agree. The site appears to rank by sales volume. The milestones-document list is what currently shows publicly.
+2. **Longest daily sales streak:** site 1,194 days (15 Aug 2026) vs document 1,110 days (Coach Dino). Possibly just a later figure.
+3. **Most units in a month:** site 8,133 vs document 8,129 (and the site spells it "Oreint").
+4. **First affiliate commission:** site says Ajiboye Temitope, document says Temitope Agbana, both 21 Aug 2017.
+
+Also worth a look, not held back: the document says Funky Collections reached five-figure USD sales within seven hours of launching a first product (2023), while the site lists Funky Collections 2nd for "Fastest to $10K in revenue" at 3 days (6 Aug 2023). These may be measured differently.
 
 ## Publication workflow
 Each record has `publicationStatus` (`published`, `ready`, `awaiting_copy`, `awaiting_asset`, `needs_verification`) and `verificationStatus`. **Only `published` is public.**

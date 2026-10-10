@@ -41,7 +41,7 @@ export function buildLayout(roomsInput) {
       for (const sec of r.sections) {
         if (sec.title) {
           const slot = Math.max(nextL, nextR);
-          headers.push({ id: `header-${sec.key}`, title: sec.title, intro: sec.intro ?? "", side: "left", x: -D.wallX, z: zAt(slot), rotY: Math.PI / 2, w: D.panelW, h: D.panelH });
+          headers.push({ id: `header-${sec.key}`, title: sec.title, intro: sec.intro ?? "", kicker: sec.kicker ?? "", side: "left", x: -D.wallX, z: zAt(slot), rotY: Math.PI / 2, w: D.panelW, h: D.panelH });
           nextL = slot + 1; nextR = slot;
         }
         for (const it of sec.items) {

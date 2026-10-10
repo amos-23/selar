@@ -1,3 +1,5 @@
+import { recordGroups } from "./records.js";
+
 // Hall of Fame categories (PRD 8.5) and the exhibition spaces built from them (PRD 7.2).
 // Intro lines are proposed copy until approved.
 export const categories = [
@@ -13,8 +15,21 @@ export const categories = [
   { slug: "creator-of-the-year", title: "Creator of the Year", intro: "One creator recognised for each year, 2016 to 2025." },
 ];
 
+// Records imported from records.selar.com (see scripts/import_records.py). Intro lines are proposed copy.
+const recordIntros = {
+  "records-speed": "The shortest times to reach a milestone.",
+  "records-streaks": "Consistency and loyalty, measured in days and months.",
+  "records-volume": "The biggest days, weeks and months on record.",
+  "records-firsts": "The creators who got there first.",
+  "records-honour": "The Selar record for Creator of the Year.",
+};
+for (const g of recordGroups) categories.push({ slug: g.slug, title: g.title, kicker: "Breakable Records", intro: recordIntros[g.slug] ?? "" });
+
 // Thematic collections: digital groupings of the same exhibits (not a claim about the physical room layout).
 export const collections = [
+  { slug: "records", number: 3, title: "Breakable Records", theme: "grey",
+    intro: "Every record set on Selar: who holds it, when it was set, and who is chasing it.",
+    categories: ["records-speed", "records-streaks", "records-volume", "records-firsts", "records-honour"] },
   { slug: "numbers", number: 5, title: "The Numbers That Tell Our Story", theme: "purple",
     intro: "Speed, consistency, volume and reach: the figures behind a decade of creator sales.",
     categories: ["fastest-sales", "consistency-streak", "top-monthly-sales", "global-reach"] },
@@ -35,6 +50,7 @@ export const collections = [
 // The suggested guided route through the exhibition (each stop links to the next).
 export const tour = [
   { href: "/exhibition/about", label: "The Exhibition Statement" },
+  { href: "/exhibition/collections/records", label: "Breakable Records" },
   { href: "/exhibition/hall-of-fame", label: "The Hall of Fame" },
   { href: "/exhibition/collections/numbers", label: "The Numbers That Tell Our Story" },
   { href: "/exhibition/collections/firsts", label: "The Firsts" },

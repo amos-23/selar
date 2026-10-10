@@ -21,9 +21,10 @@ test("exhibit records are structurally valid", () => {
   }
 });
 
-test("Hall of Fame has the ten categories from the PRD, in order", () => {
-  assert.deepEqual(categories.map((c) => c.title), ["Fastest Sales", "Consistency Streak", "Top Monthly Sales", "Global Reach", "Product Excellence", "Affiliate Legend", "Selar Firsts", "Category Leaders", "Ecosystem Impact", "Creator of the Year"]);
-  for (const c of categories) assert.ok(exhibits.some((e) => e.category === c.slug), `${c.slug} has no exhibits`);
+test("Hall of Fame has the ten categories from the PRD first, then the record groups", () => {
+  assert.deepEqual(categories.slice(0, 10).map((c) => c.title), ["Fastest Sales", "Consistency Streak", "Top Monthly Sales", "Global Reach", "Product Excellence", "Affiliate Legend", "Selar Firsts", "Category Leaders", "Ecosystem Impact", "Creator of the Year"]);
+  for (const c of categories.slice(0, 10)) assert.ok(exhibits.some((e) => e.category === c.slug), `${c.slug} has no exhibits`);
+  assert.deepEqual(categories.slice(10).map((c) => c.slug).sort(), ["records-firsts", "records-honour", "records-speed", "records-streaks", "records-volume"]);
 });
 
 test("supplied milestone records are present and accurate", () => {
@@ -57,15 +58,18 @@ test("public view only contains published records; preview adds the rest", () =>
     assert.ok(allExhibits().every((e) => e.publicationStatus === "published"));
     assert.equal(getExhibit("muyiwa"), null);
     assert.equal(exhibitsIn("selar-firsts").length, 2);
+    assert.equal(allExhibits().length, 59);
     process.env.EXHIBITION_PREVIEW = "1";
     assert.equal(getExhibit("muyiwa").slug, "muyiwa");
     assert.equal(exhibitsIn("selar-firsts").length, 4);
+    assert.equal(allExhibits().length, 65);
   } finally { process.env = prev; }
 });
 
 test("collections cover real categories; tour and timeline resolve", () => {
   for (const c of collections) for (const slug of c.categories) assert.ok(categories.some((x) => x.slug === slug));
   assert.equal(collectionWithExhibits("numbers").count, 8);
+  assert.equal(collectionWithExhibits("records").count, 30, "30 of the 34 imported records are public");
   assert.ok(tour.length >= 8);
   process.env.EXHIBITION_PREVIEW = "0";
   const t = timelineEntries();
@@ -158,10 +162,36 @@ test("walk layout works on the real exhibition data", async () => {
   const { rooms, exhibits: byId } = buildWalkData();
   const L = buildLayout(rooms);
   const placed = L.rooms.flatMap((r) => r.items).filter((i) => i.kind === "exhibit");
-  assert.equal(placed.length, 29);
-  assert.equal(Object.keys(byId).length, 29);
+  assert.equal(placed.length, 59);
+  assert.equal(Object.keys(byId).length, 59);
   assert.ok(!placed.some((i) => i.id === "muyiwa" || i.id === "ut-first-account"), "conflicting records stay off the public walk");
-  assert.ok(L.rooms.map((r) => r.key).join() .startsWith("lobby,statement,numbers,firsts,products,people,decade"));
+  assert.ok(L.rooms.map((r) => r.key).join().startsWith("lobby,statement,records,numbers,firsts,products,people,decade"));
   assert.equal(L.rooms.at(-1).key, "closing");
   delete process.env.EXHIBITION_PREVIEW;
+});
+
+import { records, recordsMeta, creatorPhotos } from "../content/exhibition/records.js";
+import { recordStatus } from "../content/exhibition/records-status.js";
+import { existsSync } from "node:fs";
+
+test("imported records are complete, well formed, and every photo exists on disk", () => {
+  assert.equal(records.length, recordsMeta.count);
+  const slugs = new Set();
+  for (const r of records) {
+    assert.ok(r.slug && r.title && r.creator && r.figure?.value && r.category.startsWith("records-"), r.slug);
+    assert.ok(!slugs.has(r.slug), `duplicate ${r.slug}`); slugs.add(r.slug);
+    assert.ok(!/\$\$|undefined/.test(JSON.stringify([r.figure, r.achievement, r.creator])), `bad escape in ${r.slug}`);
+    for (const p of [r.photo, ...r.runnerUps.map((x) => x.photo), ...r.pastHolders.map((x) => x.photo)].filter(Boolean)) assert.ok(existsSync(`public${p}`), `missing photo ${p}`);
+  }
+  assert.equal(records.find((r) => r.slug === "record-highest-monthly-revenue").figure.value, "$144,434.01");
+  for (const p of Object.values(creatorPhotos)) assert.ok(existsSync(`public${p}`));
+});
+
+test("records that contradict the milestones document are held back and explained", () => {
+  for (const [slug, st] of Object.entries(recordStatus)) {
+    assert.ok(records.some((r) => r.slug === slug), `${slug} is not an imported record`);
+    assert.notEqual(st.publicationStatus, "published");
+    assert.match(st.sourceNote, /CONFLICT/);
+  }
+  assert.equal(Object.keys(recordStatus).length, 4);
 });

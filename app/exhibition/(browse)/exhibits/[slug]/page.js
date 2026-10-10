@@ -6,6 +6,7 @@ import StatusBadge from "@/components/exhibition/StatusBadge";
 import ShareControls from "@/components/exhibition/ShareControls";
 import BackButton from "@/components/exhibition/BackButton";
 import SafeImage from "@/components/exhibition/SafeImage";
+import Avatar from "@/components/exhibition/Avatar";
 import { allExhibits, getExhibit, getCategory, collectionOf, relatedExhibits, neighbours, formatExhibitDate, isPreview, STATUS_LABELS } from "@/lib/exhibition/content";
 
 export const generateStaticParams = () => allExhibits().map((e) => ({ slug: e.slug }));
@@ -60,10 +61,22 @@ export default async function ExhibitPage({ params }) {
         </aside>
 
         <div className="exhibit-body">
+          <Avatar src={e.photo} name={e.creator || e.title} size={104} className="exhibit-avatar" />
           <h1>{e.title}</h1>
           {e.creator && e.creator !== e.title ? <p className="exhibit-creator">{e.category === "product-excellence" || e.category === "category-leaders" ? "By " : ""}{e.creator}</p> : null}
           <p className="exhibit-achievement">{e.achievement}</p>
           {e.description ? <p className="exhibit-description">{e.description}</p> : null}
+          {e.runnerUps?.length ? (
+            <section className="walk-runners" aria-label="Runners-up"><h2>Runners-up</h2>
+              <ol>{e.runnerUps.map((r) => <li key={r.place}><span className="rank">{r.placeLabel}</span><Avatar src={r.photo} name={r.name} size={40} /><span className="who">{r.name}<small>{r.date}</small></span><span className="val">{r.figure}</span></li>)}</ol>
+            </section>
+          ) : null}
+          {e.pastHolders?.length ? (
+            <section className="walk-runners" aria-label="Past holders"><h2>Past holders</h2>
+              <ol>{e.pastHolders.map((r, i) => <li key={i}><Avatar src={r.photo} name={r.name} size={40} /><span className="who">{r.name}</span><span className="val">{r.stat}</span></li>)}</ol>
+            </section>
+          ) : null}
+          {e.storeUrl && /^https:\/\//.test(e.storeUrl) ? <p><a className="btn ghost sm" href={e.storeUrl} target="_blank" rel="noopener noreferrer">Visit {e.creator}’s store ↗</a></p> : null}
           {images.map((m, i) => (
             <figure key={i} className="exhibit-media"><SafeImage src={m.src} alt={m.alt ?? ""} />{m.caption ? <figcaption>{m.caption}</figcaption> : null}</figure>
           ))}

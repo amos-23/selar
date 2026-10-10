@@ -110,11 +110,12 @@
 .plan-hof .room-title { font-size: clamp(28px, 4vw, 44px); }
 @media (min-width: 640px) { .plan { grid-template-columns: repeat(2, 1fr); } .plan-hof { grid-column: 1 / -1; } }
 @media (min-width: 960px) {
-  .plan { grid-template-columns: repeat(6, 1fr); grid-template-areas: "hof hof hof hof num num" "hof hof hof hof fir fir" "pro pro peo peo dec dec" "tim tim sta sta ins clo"; }
+  .plan { grid-template-columns: repeat(6, 1fr); grid-template-areas: "hof hof hof hof num num" "hof hof hof hof fir fir" "rec rec rec pro pro pro" "peo peo dec dec tim tim" "sta sta ins ins clo clo"; }
   .plan-hof { grid-area: hof; } .plan-numbers { grid-area: num; } .plan-firsts { grid-area: fir; } .plan-products { grid-area: pro; }
   .plan-people { grid-area: peo; } .plan-decade { grid-area: dec; } .plan-timeline { grid-area: tim; } .plan-statement { grid-area: sta; }
   .plan-inside { grid-area: ins; } .plan-closing { grid-area: clo; }
-  .plan:not(:has(.plan-inside)) { grid-template-areas: "hof hof hof hof num num" "hof hof hof hof fir fir" "pro pro peo peo dec dec" "tim tim tim sta sta clo"; }
+  .plan:not(:has(.plan-inside)) { grid-template-areas: "hof hof hof hof num num" "hof hof hof hof fir fir" "rec rec rec pro pro pro" "peo peo dec dec tim tim" "sta sta sta clo clo clo"; }
+  .plan-records { grid-area: rec; }
 }
 
 /* ---------- cards ---------- */
@@ -303,3 +304,24 @@
   .ex .hud-bottom.with-panel { display: none; }
   .ex .walk-end { bottom: 96px; }
 }
+
+/* ---------- creator photos: always circular ---------- */
+.ex .avatar { display: inline-grid; place-items: center; border-radius: 50%; object-fit: cover; flex: none; background: var(--card-bg, var(--blush)); border: 3px solid var(--accent, var(--purple)); aspect-ratio: 1; }
+.ex .avatar-initials { background: var(--purple); color: var(--blush); font: 700 1em var(--display); border-color: var(--purple); }
+.ex .card-avatar { position: absolute; top: 18px; right: 18px; width: 56px !important; height: 56px !important; }
+.ex .ex-card { position: relative; }
+.ex .ex-card .card-kicker, .ex .ex-card .card-figure, .ex .ex-card .card-title { max-width: calc(100% - 68px); }
+.ex .ex-card .card-title { max-width: 100%; }
+.ex .exhibit-avatar { margin: 0 0 14px; display: block; border-color: var(--purple); }
+.ex .walk-avatar { position: absolute; top: 64px; right: 22px; width: 84px !important; height: 84px !important; }
+.ex .walk-panel .walk-figure { padding-right: 100px; min-height: 84px; }
+.ex .walk-panel .walk-figure strong { font-size: clamp(30px, 4.4vw, 46px); }
+.ex .walk-runners { margin: 18px 0; clear: both; }
+.ex .walk-runners h2, .ex .walk-runners h3 { font: 600 16px var(--body); margin: 0 0 8px; }
+.ex .walk-runners ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ex .walk-runners li { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.ex .walk-runners .rank { width: 2.2em; font-weight: 700; color: var(--purple); flex: none; }
+.ex .walk-runners .who { flex: 1; min-width: 0; display: grid; overflow-wrap: anywhere; }
+.ex .walk-runners small { opacity: .7; }
+.ex .walk-runners .val { font-weight: 600; text-align: right; flex: none; }
+.ex .walk-panel .avatar, .ex .walk-drawer .avatar { --accent: var(--purple); }

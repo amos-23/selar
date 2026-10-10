@@ -111,7 +111,14 @@ export async function createWalk({ canvas, layout, statement, reducedMotion = fa
       if (item.kind === "lobby-title" || item.kind === "lobby-intro") drawLobbyPanel(c, item, statement);
       else if (item.kind === "closing") drawClosing(c, item.text);
       else drawPanel(c, kind === "header" ? { ...item, kind: "header" } : item, room.theme);
-      const mat = basic(0xffffff, { map: canvasTex(c) });
+      const tex = canvasTex(c);
+      const mat = basic(0xffffff, { map: tex });
+      if (item.kind === "exhibit" && item.photo) {
+        // creator photos load in after first paint; the panel is redrawn with the circular photo
+        const img = new Image();
+        img.onload = () => { if (disposed) return; drawPanel(c, item, room.theme, img); tex.needsUpdate = true; dirty = true; };
+        img.src = item.photo;
+      }
       const mesh = new THREE.Mesh(track(new THREE.PlaneGeometry(w, h)), mat);
       mesh.position.set(item.x, y, item.z); mesh.rotation.y = item.rotY;
       mesh.userData = { id: item.id, kind: item.kind ?? kind, panel: item, y };

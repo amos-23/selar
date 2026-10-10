@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import ShareControls from "../ShareControls";
 import Timeline from "../Timeline";
+import Avatar from "../Avatar";
 import { buildLayout, exhibitOrder } from "./layout";
 
 const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -193,6 +194,7 @@ export default function Walkthrough({ data }) {
           <button type="button" className="btn ghost sm walk-close" onClick={close}>Close</button>
           {ex ? (
             <>
+              <Avatar src={ex.photo} name={ex.creator || ex.title} size={92} className="walk-avatar" />
               <p className="ex-eyebrow">{ex.category}</p>
               {ex.figure ? <p className="walk-figure"><strong>{ex.figure.value}</strong><span>{ex.figure.label}</span></p> : <p className="walk-figure"><strong>{ex.leaderOf ?? ex.award ?? ex.year ?? "★"}</strong></p>}
               <h2>{ex.title}</h2>
@@ -200,6 +202,17 @@ export default function Walkthrough({ data }) {
               <p className="walk-ach">{ex.achievement}</p>
               {ex.description ? <p>{ex.description}</p> : null}
               {ex.when ? <p className="walk-when">{ex.when}</p> : null}
+              {ex.runnerUps?.length ? (
+                <div className="walk-runners"><h3>Runners-up</h3>
+                  <ol>{ex.runnerUps.map((r) => <li key={r.place}><span className="rank">{r.placeLabel}</span><Avatar src={r.photo} name={r.name} size={34} /><span className="who">{r.name}<small>{r.date}</small></span><span className="val">{r.figure}</span></li>)}</ol>
+                </div>
+              ) : null}
+              {ex.pastHolders?.length ? (
+                <div className="walk-runners"><h3>Past holders</h3>
+                  <ol>{ex.pastHolders.map((r, i) => <li key={i}><Avatar src={r.photo} name={r.name} size={34} /><span className="who">{r.name}</span><span className="val">{r.stat}</span></li>)}</ol>
+                </div>
+              ) : null}
+              {ex.storeUrl && /^https:\/\//.test(ex.storeUrl) ? <p><a href={ex.storeUrl} target="_blank" rel="noopener noreferrer" className="btn ghost sm">Visit {ex.creator}’s store ↗</a></p> : null}
               {ex.images.map((m, i) => (/* eslint-disable-next-line @next/next/no-img-element */ <img key={i} src={m.src} alt={m.alt ?? ""} loading="lazy" className="walk-img" />))}
               {data.preview ? (
                 <div className="internal"><h3>Team notes (preview only)</h3><dl><dt>Publication</dt><dd>{ex.statusLabel}</dd><dt>Verification</dt><dd>{ex.verified ? "Verified against supplied source" : "Needs verification"}</dd><dt>Source</dt><dd>{ex.sourceNote}</dd></dl></div>
