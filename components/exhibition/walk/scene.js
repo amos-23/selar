@@ -252,7 +252,7 @@ export async function createWalk({ canvas, layout, statement, reducedMotion = fa
   }
   const isSelectable = (m) => m && m.userData.kind !== "header";
   let down = null;
-  const onDown = (e) => { if (e.button > 0) return; canvas.setPointerCapture?.(e.pointerId); down = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0, lx: e.clientX, ly: e.clientY, id: e.pointerId }; };
+  const onDown = (e) => { if (e.button > 0) return; try { canvas.setPointerCapture?.(e.pointerId); } catch { /* the pointer already ended: capture is optional, the tap still counts */ } down = { x: e.clientX, y: e.clientY, t: e.timeStamp, moved: 0, lx: e.clientX, ly: e.clientY, id: e.pointerId }; };
   const onMove = (e) => {
     if (down && down.id === e.pointerId) {
       const dx = e.clientX - down.lx, dy = e.clientY - down.ly; down.lx = e.clientX; down.ly = e.clientY; down.moved += Math.abs(dx) + Math.abs(dy);
@@ -264,7 +264,8 @@ export async function createWalk({ canvas, layout, statement, reducedMotion = fa
   };
   const onUp = (e) => {
     if (!down || down.id !== e.pointerId) return;
-    const tap = down.moved <= 6 && performance.now() - down.t < 450; down = null; canvas.style.cursor = hovered ? "pointer" : "grab";
+    // event timestamps (not handler time) so a busy main thread on a slow phone doesn't turn a tap into a long press
+    const tap = down.moved <= 8 && e.timeStamp - down.t < 700; down = null; canvas.style.cursor = hovered ? "pointer" : "grab";
     if (tap) { const m = pick(e.clientX, e.clientY); if (m) onSelect({ id: m.userData.id, kind: m.userData.kind }); }
   };
   const onWheel = (e) => { e.preventDefault(); cancelGlide(); vf = clamp(vf - e.deltaY * 0.012, -7, 7); };

@@ -21,11 +21,6 @@ export default function About() {
         <p className="ex-eyebrow">Room 2 · The exhibition statement</p>
         <h1>{statement.title}</h1>
       </header>
-      <div className="statement">
-        {statement.paragraphs.map((p, i) => <p key={i} className={i === 0 ? "statement-lead" : undefined}>{p}</p>)}
-        <p className="statement-close">{statement.closingLine}</p>
-      </div>
-
       {openingStatementVisible() ? (
         <section className="opening" aria-labelledby="opening-h">
           <h2 id="opening-h">{s.title || "Opening statement"}</h2>
@@ -40,6 +35,11 @@ export default function About() {
           <StatusBadge status={s.publicationStatus} preview={preview} />
         </section>
       ) : null}
+      <div className="statement">
+        {statement.paragraphs.map((p, i) => <p key={i} className={i === 0 ? "statement-lead" : undefined}>{p}</p>)}
+        <p className="statement-close">{statement.closingLine}</p>
+      </div>
+
       <RoomPager href="/exhibition/about" />
     </Room>
   );

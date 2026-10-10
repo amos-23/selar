@@ -22,10 +22,11 @@ npm run build && npm start
 | Rooms drawer | Jump to any room, or search for a creator or product |
 | Timeline drawer | Dated milestones in order; "Walk to this exhibit" takes you there |
 | Deep links | `/exhibition#coach-dino` opens the scene already at that exhibit. Sharing uses `/exhibition/exhibits/<slug>`, which carries the Open Graph metadata |
+| Opening statement | Douglas Kendyson's statement (12 paragraphs, verbatim) opens Room 2, one panel per paragraph, followed by the exhibition statement. In the text version it opens `/exhibition/about`. His role is not shown because it has not been confirmed; portrait and recording are empty |
 | Closing | Closing line on the end wall, return to entrance, Selar link, share |
 | Text version | The earlier pages (`/exhibition/gallery`, `/hall-of-fame`, `/timeline`, `/about`, `/collections/*`, `/exhibits/*`, `/closing`) are kept as the accessible, no-WebGL route to all content (PRD section 15). It is linked from the scene ("Text version"), and devices without WebGL are sent there automatically |
 
-Opening statement, media room and the content workflow are unchanged (see below); both appear in the scene automatically once published.
+The media room appears in the scene automatically once media is published.
 
 ## Architecture and why
 - **Three.js (r169), loaded only on `/exhibition`.** A first-person walk is what was asked for. It adds one dependency (`three`), downloaded only for the scene.
@@ -73,7 +74,7 @@ Each record has `publicationStatus` (`published`, `ready`, `awaiting_copy`, `awa
 3. For `adebisi-odunayo-temitope` the source qualifies the 6,497 record as the highest in the supplied document; the public text says "the highest number recorded by a Selar affiliate". Confirm the wording.
 
 ## When post-exhibition materials arrive (files to update)
-- Opening statement: `content/exhibition/statement.js` → `openingStatement` (text, role, portrait, recording; then `publicationStatus: "published"`).
+- Opening statement: text is in `content/exhibition/statement.js` → `openingStatement`. Still to add: Douglas Kendyson's role (not shown until confirmed), and optionally a portrait and a recording.
 - Photos/videos: add files under `public/exhibition/` and items to `content/exhibition/media.js`. The Highlights nav item and room appear automatically once one item is published.
 - Creator portraits / product artwork: add `image: { src, alt }` (or `media`) to records in `content/exhibition/exhibits.js`.
 - New exhibits: add a record (they appear in the Hall of Fame, collections, timeline if dated, and get their own URL).

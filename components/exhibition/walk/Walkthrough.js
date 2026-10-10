@@ -27,6 +27,7 @@ export default function Walkthrough({ data }) {
   const [announce, setAnnounce] = useState("");
   const [touch, setTouch] = useState(false);
   const panelRef = useRef(null);
+  const [armed, setArmed] = useState(false); // the panel ignores input briefly after opening: a touch tap is followed by a "ghost" click on whatever is now under the finger
   selectedRef.current = selected;
 
   const clearHash = () => { try { if (window.location.hash) window.history.replaceState(null, "", window.location.pathname + window.location.search); } catch {} };
@@ -99,6 +100,12 @@ export default function Walkthrough({ data }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [drawer, close]);
+  useEffect(() => {
+    setArmed(false);
+    if (!selected) return;
+    const t = setTimeout(() => setArmed(true), 450);
+    return () => clearTimeout(t);
+  }, [selected]);
   useEffect(() => { if (selected) { setAnnounce(`Opened ${selected.type === "exhibit" ? data.exhibits[selected.id]?.title : mediaById[selected.id]?.title || "photograph"}.`); panelRef.current?.focus({ preventScroll: true }); } }, [selected, data.exhibits, mediaById]);
 
   const enter = () => { setEntered(true); ctl.current?.goToRoom(1); };
@@ -190,7 +197,7 @@ export default function Walkthrough({ data }) {
       ) : null}
 
       {(ex || media) ? (
-        <aside className="walk-panel" role="dialog" aria-label={ex ? ex.title : media.title || "Photograph"} ref={panelRef} tabIndex={-1}>
+        <aside className="walk-panel" role="dialog" aria-label={ex ? ex.title : media.title || "Photograph"} ref={panelRef} tabIndex={-1} style={armed ? undefined : { pointerEvents: "none" }}>
           <button type="button" className="btn ghost sm walk-close" onClick={close}>Close</button>
           {ex ? (
             <>
