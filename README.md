@@ -11,6 +11,10 @@ ADMIN_PASSWORD=choose-one npm run dev   # http://localhost:3000/admin
 npm test
 ```
 
+## Virtual exhibition
+
+The *Selar at 10: The Gears of Creativity* virtual exhibition lives at `/exhibition`. See [docs/EXHIBITION.md](docs/EXHIBITION.md) for features, content workflow and what is still outstanding.
+
 ## Environment variables
 
 | Variable | Purpose |
@@ -21,6 +25,7 @@ npm test
 | `RESEND_API_KEY`, `MAIL_FROM` | Send real email via Resend. Without a key, emails are only logged to the server console. |
 | `ADMIN_NOTIFY_EMAIL` | Optional. Gets an email on every RSVP / decline. |
 | `WEBHOOK_SECRET` | Optional. Point a Resend `email.delivered` webhook at `/api/webhooks/resend?secret=…` to populate the Delivered count. |
+| `EXHIBITION_PREVIEW` | Optional. `1` shows unpublished exhibition items with status labels (always on in dev and Vercel previews); `0` forces it off. |
 | `DATA_FILE` | Optional. Path of the JSON data file (default `.data/selar-invitations.json`). |
 
 ## Before launch
