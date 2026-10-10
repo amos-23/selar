@@ -19,6 +19,7 @@ export default function LoginForm() {
   return (
     <main className="cover">
       <form className="cover-card" onSubmit={submit}>
+        <img className="logo" src="/selar-logo-white.png" alt="Selar" width="180" />
         <p className="eyebrow">Selar Anniversary Exhibition</p>
         <h1>Team sign in</h1>
         <label className="field">Password<input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus /></label>

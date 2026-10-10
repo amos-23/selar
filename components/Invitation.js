@@ -27,6 +27,7 @@ function InvitationFlow({ slug, url, guest, event, preview = false }) {
     return (
       <main className="cover">
         <div className="cover-card rise">
+          <img className="logo" src="/selar-logo-white.png" alt="Selar" width="180" />
           <p className="eyebrow">You&apos;re invited</p>
           <h1>{event.name}</h1>
           <p className="lede">Hi {firstName(guest.name)}, {event.tagline}</p>
@@ -85,6 +86,7 @@ function InvitationFlow({ slug, url, guest, event, preview = false }) {
   return (
     <main className="page rise">
       <section className="hero" style={event.coverImage ? { backgroundImage: `linear-gradient(rgba(20,20,43,.55),rgba(20,20,43,.85)),url(${event.coverImage})` } : undefined}>
+        <img className="logo" src="/selar-logo-white.png" alt="Selar" width="180" />
         <p className="eyebrow">Hi {firstName(guest.name)}, you&apos;re invited</p>
         <h1>{event.name}</h1>
         <p className="lede">{event.description}</p>

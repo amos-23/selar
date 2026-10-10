@@ -27,7 +27,7 @@ npm test
 
 - **Storage:** data lives in a JSON file (`lib/store.js`). That works locally but is **ephemeral on Vercel**. Replace `snapshot`/`mutate` with a real database before inviting guests.
 - Set the event date, venue and address in `/admin → Event details` (they ship as placeholders).
-- Swap `--accent` and fonts in `app/globals.css` for the Selar anniversary identity.
+- Colors and logo follow the Selar Visual Identity Guidelines 2.0 (`Logo/`); logos used by the app live in `public/`. Swap fonts in `app/globals.css` if the guide specifies typefaces.
 
 ## How it works
 
