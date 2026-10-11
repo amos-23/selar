@@ -27,7 +27,7 @@ export default function Dashboard({ event, guests, mailLive }) {
   return (
     <main className="admin">
       <header>
-        <img className="logo sm" src="/selar-logo.png" alt="Selar" />
+        <img className="logo sm" src="/brand/selar10-mark-purple.svg" alt="Selar at 10" width="56" height="54" />
         <h1>{event.name}</h1>
         <div>
           <a className="btn ghost sm" href="/api/admin/export">Export CSV</a>

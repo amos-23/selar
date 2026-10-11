@@ -111,8 +111,15 @@ export async function createWalk({ canvas, layout, statement, reducedMotion = fa
       if (item.kind === "lobby-title" || item.kind === "lobby-intro") drawLobbyPanel(c, item, statement);
       else if (item.kind === "closing") drawClosing(c, item.text);
       else drawPanel(c, kind === "header" ? { ...item, kind: "header" } : item, room.theme);
+      // the Selar at 10 logo is drawn onto the lobby title panel and the closing wall once it has loaded
+      const logoSrc = item.kind === "lobby-title" ? "/brand/selar10-celebratory-white.png" : item.kind === "closing" ? "/brand/selar10-mark-light.png" : null;
       const tex = canvasTex(c);
       const mat = basic(0xffffff, { map: tex });
+      if (logoSrc) {
+        const img = new Image();
+        img.onload = () => { if (disposed) return; if (item.kind === "closing") drawClosing(c, item.text, img); else drawLobbyPanel(c, item, statement, img); tex.needsUpdate = true; dirty = true; };
+        img.src = logoSrc;
+      }
       if (item.kind === "exhibit" && item.photo) {
         // creator photos load in after first paint; the panel is redrawn with the circular photo
         const img = new Image();

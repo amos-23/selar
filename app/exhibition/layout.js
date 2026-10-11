@@ -10,8 +10,8 @@ export const metadata = {
   description,
   robots: { index: true, follow: true },
   alternates: { canonical: "/exhibition" },
-  openGraph: { type: "website", siteName: "Selar at 10", title: "Selar at 10 | The Gears of Creativity", description, url: "/exhibition" },
-  twitter: { card: "summary", title: "Selar at 10 | The Gears of Creativity", description },
+  openGraph: { type: "website", siteName: "Selar at 10", title: "Selar at 10 | The Gears of Creativity", description, url: "/exhibition", images: [{ url: "/brand/selar10-og.png", width: 1200, height: 630, alt: "Selar at 10" }] },
+  twitter: { card: "summary_large_image", title: "Selar at 10 | The Gears of Creativity", description, images: ["/brand/selar10-og.png"] },
   other: { "x-exhibition": statement.title },
 };
 
@@ -20,10 +20,6 @@ export const viewport = { width: "device-width", initialScale: 1, themeColor: "#
 export default function ExhibitionLayout({ children }) {
   return (
     <div className="ex">
-      {/* Brand typefaces (Parkinsans, Google Sans Flex) per the Selar guidelines; Inter/system fonts are the fallback. */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Parkinsans:wght@400;600;700&family=Google+Sans+Flex:wght@400;500;600&display=swap" />
       {children}
     </div>
   );

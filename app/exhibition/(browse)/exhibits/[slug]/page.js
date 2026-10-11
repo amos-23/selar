@@ -20,8 +20,8 @@ export async function generateMetadata({ params }) {
     title,
     description: e.achievement,
     alternates: { canonical: `/exhibition/exhibits/${e.slug}` },
-    openGraph: { type: "article", title: `${title} | Selar at 10`, description: e.achievement, url: `/exhibition/exhibits/${e.slug}` },
-    twitter: { card: "summary", title: `${title} | Selar at 10`, description: e.achievement },
+    openGraph: { type: "article", title: `${title} | Selar at 10`, description: e.achievement, url: `/exhibition/exhibits/${e.slug}`, images: [{ url: "/brand/selar10-og.png", width: 1200, height: 630, alt: "Selar at 10" }] },
+    twitter: { card: "summary_large_image", title: `${title} | Selar at 10`, description: e.achievement, images: ["/brand/selar10-og.png"] },
   };
 }
 

@@ -36,6 +36,22 @@ The media room appears in the scene automatically once media is published.
 - **Accessibility.** All controls are real buttons; the Rooms drawer reaches every exhibit by keyboard or screen reader; rooms are announced in a live region; reduced motion removes glides and spinning; Esc closes panels; the text version is always one click away.
 - **Content is data** in `content/exhibition/*.js`; UI components never hardcode creator records.
 
+## Brand: Selar at 10 logo
+The 10th-anniversary logo pack is in `Logo/Selar at 10 Logo files/` (with its mini guide). Variant 1 is the full logo (with YEARS), Variant 2 the "Selar @10" mark, and Celebratory 1/2 the same with confetti accents; each comes in Dark Purple, Purple, Light Purple and White. Web copies live in `public/brand/`:
+
+| Where | File | Why |
+|---|---|---|
+| Nav bar, walkthrough HUD (dark) | `selar10-mark-white.svg` | Mark only: the YEARS line is unreadable at small sizes |
+| Walkthrough entrance card, invitation cover/hero, sign-in and 404 pages (dark) | `selar10-celebratory-white.svg` | The guide's "Celebratory" usage: white on purple |
+| 3D lobby title panel | `selar10-celebratory-white.png` | Drawn onto the panel texture |
+| 3D closing wall | `selar10-mark-light.png` | Light purple on deep purple, per the usage page |
+| Admin header (light) | `selar10-mark-purple.svg` | Purple on light |
+| Emails | `selar10-full-purple.png` | Email clients do not render SVG |
+| Favicon / app icon | `selar10-icon-48.png`, `selar10-icon-512.png`, `/apple-touch-icon.png` | Purple mark on blush |
+| Social share image | `selar10-og.png` (1200×630) | Celebratory logo on Selar purple |
+
+The colours are unchanged from the Selar guidelines. Headlines across the site (exhibition and invitation pages) use Parkinsans and body text Google Sans Flex; emails use Inter, the guide's fallback face.
+
 ## Breakable Records (imported from records.selar.com)
 The 34 records on https://records.selar.com/breakable-records ("Yearly Champions") are in the exhibition as a room (**Room 3, Breakable Records**) with a frame for each record, grouped into Fastest to Reach, Streaks and Loyalty, Volume and Revenue, Firsts on Selar, and Creator of the Year. Each frame shows the holder's **circular photo** (initials in a circle when there is no photo), the figure, the date, the site's own description, the runners-up with their photos, past holders (Creator of the Year) and a link to the creator's store.
 
@@ -78,7 +94,7 @@ Each record has `publicationStatus` (`published`, `ready`, `awaiting_copy`, `awa
 - Photos/videos: add files under `public/exhibition/` and items to `content/exhibition/media.js`. The Highlights nav item and room appear automatically once one item is published.
 - Creator portraits / product artwork: add `image: { src, alt }` (or `media`) to records in `content/exhibition/exhibits.js`.
 - New exhibits: add a record (they appear in the Hall of Fame, collections, timeline if dated, and get their own URL).
-- Sharing image: add an approved image and reference it in `openGraph.images` / `twitter.images` in `app/exhibition/layout.js`.
+- Sharing image: `public/brand/selar10-og.png` (Selar at 10 celebratory logo). Replace it with a designed card if one is supplied.
 - Final domain: set `SITE_URL` (used for `metadataBase`, canonical and Open Graph URLs).
 
 ## Deploying

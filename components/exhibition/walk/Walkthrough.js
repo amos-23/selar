@@ -147,8 +147,8 @@ export default function Walkthrough({ data }) {
       {status === "ready" && !entered ? (
         <div className="walk-card entrance rise">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/selar-logo-white.png" alt="Selar" width="150" height="77" className="walk-logo" />
-          <p className="ex-eyebrow">Selar at 10 · Virtual exhibition</p>
+          <img src="/brand/selar10-celebratory-white.svg" alt="Selar at 10" width="150" height="173" className="walk-logo" />
+          <p className="ex-eyebrow">Virtual exhibition</p>
           <h1>The Gears of Creativity</h1>
           <p className="walk-lede">{data.statement.intro}</p>
           <div className="ex-actions">
@@ -164,8 +164,7 @@ export default function Walkthrough({ data }) {
           <div className="hud-top">
             <button type="button" className="hud-btn hud-logo" onClick={() => goRoom(0)} aria-label="Back to the entrance">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/selar-logo-white.png" alt="" width="70" height="36" />
-              <span>at 10</span>
+              <img src="/brand/selar10-mark-white.svg" alt="" width="40" height="38" />
             </button>
             <p className="hud-room" aria-hidden="true">{room?.number ? `Room ${room.number} · ` : ""}{room?.title}</p>
             <div className="hud-actions">

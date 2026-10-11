@@ -12,7 +12,7 @@ export default async function AdminPage() {
     return (
       <main className="cover">
         <div className="cover-card">
-          <img className="logo" src="/selar-logo-white.png" alt="Selar" width="180" />
+          <img className="logo" src="/brand/selar10-celebratory-white.svg" alt="Selar at 10" width="150" height="173" />
           <h1>Admin is not set up</h1>
           <p className="lede">Set the <code>ADMIN_PASSWORD</code> environment variable and redeploy to enable this page.</p>
         </div>
