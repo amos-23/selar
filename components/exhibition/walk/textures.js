@@ -163,7 +163,7 @@ export function drawPanel(canvas, item, themeKey, photoImg = null) {
   ctx.font = `600 18px ${BODY}`; ctx.fillStyle = T.accent; ctx.fillText("Select to open  →", pad, h - 22);
 }
 
-export function drawLobbyPanel(canvas, item, statement) {
+export function drawLobbyPanel(canvas, item, statement, logo = null) {
   const ctx = canvas.getContext("2d");
   const s = canvas.width / 960;
   ctx.setTransform(s, 0, 0, s, 0, 0);
@@ -172,9 +172,13 @@ export function drawLobbyPanel(canvas, item, statement) {
   ctx.fillStyle = title ? "#5a0b4d" : "#ffe4fb"; ctx.fillRect(0, 0, w, h);
   ctx.textBaseline = "alphabetic";
   if (title) {
-    ctx.font = `700 24px ${BODY}`; ctx.fillStyle = "#ffd61f"; ctx.fillText("SELAR AT 10 · VIRTUAL EXHIBITION", 56, 90);
-    const f = fit(ctx, statement.title, DISPLAY, 600, 118, 60, w - 112, 3);
-    ctx.fillStyle = "#ffffff"; drawLines(ctx, f.lines, 56, 200, f.size * 1.06);
+    // Selar at 10 celebratory logo on the left (per the 10th-anniversary logo guide: white on purple), title on the right
+    const lw = 340, lh = Math.round(lw * 1039 / 900);
+    if (logo && logo.naturalWidth) ctx.drawImage(logo, 50, (h - lh) / 2, lw, lh);
+    const x = 430, colW = w - x - 50;
+    ctx.font = `700 22px ${BODY}`; ctx.fillStyle = "#ffd61f"; ctx.fillText("VIRTUAL EXHIBITION", x, 190);
+    const f = fit(ctx, statement.title, DISPLAY, 600, 92, 48, colW, 4);
+    ctx.fillStyle = "#ffffff"; drawLines(ctx, f.lines, x, 190 + 22 + f.size, f.size * 1.06);
   } else {
     const f = fit(ctx, statement.intro, DISPLAY, 600, 54, 30, w - 112, 7);
     ctx.font = `600 ${f.size}px ${DISPLAY}`; ctx.fillStyle = "#5a0b4d"; drawLines(ctx, f.lines, 56, 120, f.size * 1.25);
@@ -182,14 +186,16 @@ export function drawLobbyPanel(canvas, item, statement) {
   }
 }
 
-export function drawClosing(canvas, text) {
+export function drawClosing(canvas, text, logo = null) {
   const ctx = canvas.getContext("2d");
   const s = canvas.width / 1280;
   ctx.setTransform(s, 0, 0, s, 0, 0);
   const w = 1280, h = 520;
   ctx.fillStyle = "#2d0025"; ctx.fillRect(0, 0, w, h);
   ctx.fillStyle = "#ffd61f"; ctx.fillRect(0, h - 14, w, 14);
-  const f = fit(ctx, text, DISPLAY, 600, 96, 48, w - 140, 4);
+  const ls = 300; // Selar at 10 mark, light purple on deep purple
+  if (logo && logo.naturalWidth) ctx.drawImage(logo, w - 70 - ls, (h - 14 - ls * 577 / 600) / 2, ls, ls * 577 / 600);
+  const f = fit(ctx, text, DISPLAY, 600, 88, 44, w - 140 - ls - 40, 4);
   ctx.fillStyle = "#ffe4fb"; ctx.textBaseline = "alphabetic";
   const total = f.lines.length * f.size * 1.12; drawLines(ctx, f.lines, 70, (h - total) / 2 + f.size * 0.85, f.size * 1.12);
 }

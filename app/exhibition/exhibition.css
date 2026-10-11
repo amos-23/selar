@@ -54,8 +54,7 @@
 /* ---------- top bar ---------- */
 .topbar { position: sticky; top: 0; z-index: 30; background: var(--deep); color: var(--blush); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; border-bottom: 1px solid rgba(255,228,251,.18); }
 .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; min-height: 48px; }
-.brand img { width: 84px; height: auto; display: block; }
-.brand-ten { font: 600 15px var(--display); color: var(--yellow); letter-spacing: .04em; }
+.brand img { width: 48px; height: auto; display: block; }
 .menu-toggle { min-height: 44px; min-width: 76px; padding: 0 16px; border-radius: 999px; background: transparent; color: var(--blush); border: 2px solid var(--blush); font: 500 15px var(--body); cursor: pointer; }
 .menu { display: none; position: absolute; left: 0; right: 0; top: 100%; background: var(--deep); border-bottom: 1px solid rgba(255,228,251,.18); padding: 8px 16px 16px; }
 .menu.open { display: block; }
@@ -233,7 +232,7 @@
 .ex .walk-msg { position: absolute; top: 16px; left: 16px; right: 16px; z-index: 5; }
 .ex .walk-card { position: absolute; z-index: 5; inset: 0; margin: auto; height: fit-content; width: min(560px, 100% - 32px); max-height: calc(100dvh - 32px); overflow: auto; text-align: center; padding: clamp(24px, 5vw, 44px); background: rgba(45, 0, 37, .9); border: 2px solid rgba(255, 228, 251, .3); border-radius: 12px; backdrop-filter: blur(8px); }
 .ex .walk-card h1 { font-size: clamp(30px, 6vw, 52px); color: #fff; margin-bottom: 14px; }
-.ex .walk-logo { display: block; margin: 0 auto 14px; width: 130px; height: auto; }
+.ex .walk-logo { display: block; margin: 0 auto 10px; width: clamp(110px, 18vh, 150px); height: auto; }
 .ex .walk-lede { font-size: clamp(16px, 2.2vw, 19px); margin: 0 auto; max-width: 30rem; }
 .ex .walk-card .ex-actions { justify-content: center; margin-top: 24px; }
 .ex .walk-card .btn.ghost { color: var(--blush); }
@@ -247,8 +246,8 @@
 .ex .hud-btn:disabled { opacity: .35; cursor: default; }
 .ex .hud-btn.round { width: 56px; height: 56px; padding: 0; font-size: 20px; }
 .ex .hud-btn.big { width: 72px; height: 72px; font-size: 26px; background: var(--yellow); color: var(--deep); border-color: var(--yellow); }
-.ex .hud-logo img { width: 62px; height: auto; display: block; }
-.ex .hud-logo span { font: 600 14px var(--display); color: var(--yellow); }
+.ex .hud-logo { padding: 4px 12px; }
+.ex .hud-logo img { width: 40px; height: auto; display: block; }
 .ex .hud-room { position: absolute; z-index: 6; top: 16px; left: 50%; transform: translateX(-50%); margin: 0; padding: 8px 18px; background: rgba(45, 0, 37, .82); border-radius: 999px; font: 600 14px var(--body); color: var(--blush); max-width: calc(100% - 24px); pointer-events: none; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ex .hud-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .ex .hud-preview { position: absolute; z-index: 6; left: 12px; top: 66px; margin: 0; padding: 3px 10px; background: var(--yellow); color: var(--deep); font: 700 11px var(--body); letter-spacing: .08em; text-transform: uppercase; border-radius: 99px; }
@@ -296,7 +295,6 @@
 @media (max-width: 859px) {
   .ex .hud-btn { font-size: 14px; padding: 6px 12px; }
   .ex .hud-btn span { display: none; }
-  .ex .hud-logo span { display: inline; }
   .ex .hud-text { display: none; }
   .ex .hud-top { padding: 8px; }
   .ex .hud-room { top: 62px; font-size: 13px; padding: 6px 12px; }

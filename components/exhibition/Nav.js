@@ -39,8 +39,7 @@ export default function Nav({ showHighlights }) {
       <a className="skip" href="#main">Skip to content</a>
       <Link href="/exhibition/gallery" className="brand" aria-label="Selar at 10: return to the main gallery">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/selar-logo-white.png" alt="Selar" width="96" height="49" />
-        <span className="brand-ten">at 10</span>
+        <img src="/brand/selar10-mark-white.svg" alt="Selar at 10" width="48" height="46" />
       </Link>
       <button type="button" className="menu-toggle" aria-expanded={open} aria-controls="ex-menu" onClick={() => setOpen(!open)}>
         <span className="sr-only">Menu</span>
